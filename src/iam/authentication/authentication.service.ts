@@ -79,30 +79,28 @@ export class AuthenticationService {
 
   async refreshTokens(refreshTokenDto: RefreshTokenDto) {
     try {
-      const decodedToken = await this.jwtService.verifyAsync<{ sub: number, refreshTokenId: string }>(
-        refreshTokenDto.refreshToken,
-        {
-          secret: this.jwtConfiguration.secret,
-          audience: this.jwtConfiguration.audience,
-          issuer: this.jwtConfiguration.issuer,
-        }
-      );
-
-      if (!decodedToken.sub || !decodedToken.refreshTokenId) {
-        throw new UnauthorizedException('Invalid token');
-      }
-
-      const user = await this.usersRepository.findOneByOrFail({
-        id: decodedToken.sub,
+      const { sub, refreshTokenId } = await this.jwtService.verifyAsync<
+        Pick<ActiveUserData, 'sub'> & { refreshTokenId: string}
+      >(refreshTokenDto.refreshToken, {
+        secret: this.jwtConfiguration.secret,
+        audience: this.jwtConfiguration.audience,
+        issuer: this.jwtConfiguration.issuer,
       });
 
+      // if (!decodedToken.sub || !decodedToken.refreshTokenId) {
+      //   throw new UnauthorizedException('Invalid token');
+      // }
+
+      const user = await this.usersRepository.findOneByOrFail({
+        id: sub,
+      });
       const isValid = await this.refreshTokenIdsStorage.validate(
         user.id,
-        decodedToken.refreshTokenId
+        refreshTokenId
       );
-
       if (isValid) {
         await this.refreshTokenIdsStorage.invalidate(user.id);
+      } else {
         throw new Error('Refresh token is invalid');
       }
 
