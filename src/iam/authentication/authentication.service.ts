@@ -71,19 +71,26 @@ export class AuthenticationService {
 
   async refreshTokens(refreshTokenDto: RefreshTokenDto) {
     try {
-      const { sub } = await this.jwtService.verifyAsync<
-        Pick<ActiveUserData, 'sub'
-      >(refreshTokenDto.refreshToken, {
-        secret: this.jwtConfiguration.secret,
-        audience: this.jwtConfiguration.audience,
-        issuer: this.jwtConfiguration.issuer,
-      })
+      const decodedToken = await this.jwtService.verifyAsync<{ sub: number }>(
+        refreshTokenDto.refreshToken,
+        {
+          secret: this.jwtConfiguration.secret,
+          audience: this.jwtConfiguration.audience,
+          issuer: this.jwtConfiguration.issuer,
+        }
+      );
+
+      if (!decodedToken.sub) {
+        throw new UnauthorizedException('Invalid token');
+      }
+
       const user = await this.usersRepository.findOneByOrFail({
-        id: sub,
-      })
-      return this.generateTokens(user)
+        id: decodedToken.sub,
+      });
+
+      return this.generateTokens(user);
     } catch (err) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Invalid token');
     }
   }
 
