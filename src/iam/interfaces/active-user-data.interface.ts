@@ -8,5 +8,5 @@ export interface ActiveUserData {
   /**
    *	The subject's (user) email.
    */
-  email: number;
+  email: string;
 }
