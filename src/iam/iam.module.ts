@@ -13,17 +13,20 @@ import { AccessTokenGuard } from './authentication/guards/access-token/access-to
 import { AuthenticationGuard } from './authentication/guards/authentication/authentication.guard';
 import { RefreshTokenIdsStorage } from './authentication/refresh-token-ids.storage/refresh-token-ids.storage';
 import { PermissionsGuard } from './authorization/guards/permissions.guard';
+import { PoliciesGuard } from './authorization/guards/policies.guard';
 import { PolicyHandlerStorage } from './authorization/policies/policy-handlers.storage';
 import {
   FrameworkContributorPolicy,
   FrameworkContributorPolicyHandler,
 } from './authorization/policies/framework-contributor.policy';
 import { RolesGuard } from './authorization/guards/roles/roles.guard';
-import { PoliciesGuard } from './authorization/guards/policies.guard';
+import { ApiKeysService } from './authentication/api-key.service';
+import { ApiKey } from '../users/api-keys/entities/api-key.entity/api-key.entity';
+import { ApiKeyGuard } from './authentication/guards/api-key.guard';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, ApiKey]),
     JwtModule.registerAsync(jwtConfig.asProvider()),
     ConfigModule.forFeature(jwtConfig),
   ],
@@ -38,13 +41,15 @@ import { PoliciesGuard } from './authorization/guards/policies.guard';
     },
     {
       provide: APP_GUARD,
-      useClass: RolesGuard, // PermissionsGuard, // PoliciesGuard,
+      useClass: PoliciesGuard, // PermissionsGuard, // PoliciesGuard,
     },
     AccessTokenGuard,
+    ApiKeyGuard,
     RefreshTokenIdsStorage,
     AuthenticationService,
-    // PolicyHandlerStorage,
-    // FrameworkContributorPolicyHandler,
+    ApiKeysService,
+    PolicyHandlerStorage,
+    FrameworkContributorPolicyHandler,
   ],
   controllers: [AuthenticationController]
 })
