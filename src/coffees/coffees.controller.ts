@@ -15,9 +15,9 @@ import { Policies } from '../iam/authorization/decorators/policies.decorator';
 export class CoffeesController {
   constructor(private readonly coffeesService: CoffeesService) {}
 
-  @Roles(Role.Admin)
   // @Permissions(Permission.CreateCoffee)
-  @Policies(new FrameworkContributorPolicy(), /** new MinAgePolicy(18), new OnlyAdminPolicy() */)
+  // @Policies(new FrameworkContributorPolicy(), /** new MinAgePolicy(18), new OnlyAdminPolicy() */)
+  @Roles(Role.Admin)
   @Post()
   create(@Body() createCoffeeDto: CreateCoffeeDto) {
     return this.coffeesService.create(createCoffeeDto);

@@ -38,13 +38,13 @@ import { PoliciesGuard } from './authorization/guards/policies.guard';
     },
     {
       provide: APP_GUARD,
-      useClass: PoliciesGuard, //RolesGuard, // PermissionsGuard
+      useClass: RolesGuard, // PermissionsGuard, // PoliciesGuard,
     },
     AccessTokenGuard,
     RefreshTokenIdsStorage,
     AuthenticationService,
-    PolicyHandlerStorage,
-    FrameworkContributorPolicyHandler,
+    // PolicyHandlerStorage,
+    // FrameworkContributorPolicyHandler,
   ],
   controllers: [AuthenticationController]
 })
