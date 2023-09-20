@@ -13,8 +13,8 @@ import { Permission } from '../iam/authorization/permission.type';
 export class CoffeesController {
   constructor(private readonly coffeesService: CoffeesService) {}
 
-  // @Roles(Role.Admin)
-  @Permissions(Permission.CreateCoffee)
+  @Roles(Role.Admin)
+  // @Permissions(Permission.CreateCoffee)
   @Post()
   create(@Body() createCoffeeDto: CreateCoffeeDto) {
     return this.coffeesService.create(createCoffeeDto);
