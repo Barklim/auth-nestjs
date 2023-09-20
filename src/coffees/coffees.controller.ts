@@ -17,8 +17,8 @@ export class CoffeesController {
   constructor(private readonly coffeesService: CoffeesService) {}
 
   // @Permissions(Permission.CreateCoffee)
-  @Policies(new FrameworkContributorPolicy(), /** new MinAgePolicy(18), new OnlyAdminPolicy() */)
-  // @Roles(Role.Admin)
+  // @Policies(new FrameworkContributorPolicy(), /** new MinAgePolicy(18), new OnlyAdminPolicy() */)
+  @Roles(Role.Admin)
   @Post()
   create(@Body() createCoffeeDto: CreateCoffeeDto) {
     return this.coffeesService.create(createCoffeeDto);
